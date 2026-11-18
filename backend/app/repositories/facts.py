@@ -45,6 +45,14 @@ def mark_batched(conn: sqlite3.Connection, fact_ids: list[int], batch_id: int) -
         )
 
 
+def facts_for_batch(conn: sqlite3.Connection, batch_id: int) -> list[dict[str, Any]]:
+    rows = conn.execute(
+        "SELECT * FROM redeem_facts WHERE batch_id=? ORDER BY id",
+        (batch_id,),
+    ).fetchall()
+    return [dict(r) for r in rows]
+
+
 def day_is_sealed(conn: sqlite3.Connection, business_day: str) -> bool:
     row = conn.execute(
         "SELECT 1 FROM redeem_batches WHERE business_day=? AND status='sealed' LIMIT 1",
